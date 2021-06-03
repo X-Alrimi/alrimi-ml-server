@@ -154,7 +154,7 @@ for cur_epoch in range(epoch_num) :
   print("epoch {} recall : {}  precision : {} f1_score : {} acc_mean : {}".format(cur_epoch+1, recall, precision, f1_score, valid_acc))
   
 
-  SAVE_PATH = './model/checkpoint/cur_epcoh_%.2f_valid_recall_%.2f_valid_precision_%.2f_valid_f1_score_%.2f__valid_acc_mea_%.2f' % (cur_epoch+1, recall, precision, f1_score, cur_acc/len(valid_dataloader))
+  SAVE_PATH = './news_model/checkpoint/cur_epcoh_%.2f_valid_recall_%.2f_valid_precision_%.2f_valid_f1_score_%.2f__valid_acc_mea_%.2f' % (cur_epoch+1, recall, precision, f1_score, cur_acc/len(valid_dataloader))
   torch.save({'cur_epoch' : cur_epoch, 'hyper_params' : hyper_params, 'valid_recall' : recall,\
   'valid_precision':precision, 'valid_f1_score' : f1_score, 'valid_acc' : valid_acc,\
   'model_state_dict' : model.state_dict(), 'optim_state_dict' : optimizer.state_dict()},SAVE_PATH)

@@ -1,6 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from processing import *
+import torch
+from kobert_transformers import get_tokenizer, get_kobert_model
+from news_model.news_dataset import NewsDataset
+from news_model.pred import Pred
+from torch.utils.data import DataLoader
 
 app = Flask(__name__)
 CORS(app)
@@ -21,8 +26,15 @@ def predict_route():
         if not check_type(news_dto_type, news_dto):
             return '', 400
 
+        test_dataset = NewsDataset(test_data['input'], test_data['label'], tokenizer, \
+                                   checkpoint['hyper_params']['embed_size'], \
+                                   checkpoint['hyper_params']['batch_size'])
+
+        test_dataloader = DataLoader(test_dataset, batch_size=checkpoint['hyper_params']['batch_size'], \
+                                     num_workers=checkpoint['hyper_params']['batch_size'])
+
         text = preprocessing(news_dto['text'])
-        _ = inference(model, text)
+        preds, vecs = model(test_dataloader)
 
         result = {
             'news': {key: news_dto[key] for key in news_dto if key != 'text'},
@@ -35,6 +47,9 @@ def predict_route():
 
 
 if __name__ == '__main__':
-    # model = load_model('')
-    model = DummyModel()
+    LOAD_PATH = ''
+    checkpoint = torch.load(LOAD_PATH)
+    tokenizer = get_tokenizer()
+    model = Pred(checkpoint)
+
     app.run(debug=True)

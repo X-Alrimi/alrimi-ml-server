@@ -1,4 +1,3 @@
-import torch
 import re
 
 
@@ -25,19 +24,3 @@ def preprocessing(text):
     text = delete_reporter(text)
     text = f'[CLS] {text} [SEP]'
     return text
-
-
-class DummyModel(torch.nn.Module):
-    def __init__(self):
-        super(DummyModel, self).__init__()
-
-
-def load_model(path):
-    model = DummyModel()
-    state = torch.load(path)
-    model.load_state_dict(state)
-    return model
-
-
-def inference(model, data):
-    return None

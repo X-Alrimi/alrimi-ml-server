@@ -50,7 +50,7 @@ class Pred() :
         
 if __name__ == "__main__":
     # execute only if run as a script
-    LOAD_PATH = './model/checkpoint/cur_epcoh_8.00_valid_recall_0.99_valid_precision_0.91_valid_f1_score_0.94__valid_acc_mea_0.95'
+    LOAD_PATH = './news_model/checkpoint/cur_epcoh_8.00_valid_recall_0.99_valid_precision_0.91_valid_f1_score_0.94__valid_acc_mea_0.95'
     checkpoint = torch.load(LOAD_PATH)
     tokenizer = get_tokenizer()
     
