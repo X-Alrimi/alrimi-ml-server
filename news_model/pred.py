@@ -22,7 +22,7 @@ class Pred() :
         model.load_state_dict(checkpoint['model_state_dict'])
         
         self.model = model
-        self.device = checkpoint['hyper_params']['device']
+        self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         
     def __call__(self, test_dataloader) :
         outs = list();vecs = list()
@@ -37,8 +37,7 @@ class Pred() :
                 token_ids = token_ids.long().to(self.device)
                 segment_ids = segment_ids.long().to(self.device)
                 valid_length= valid_length
-                label = label.long().to(self.device)
-            
+
                 out, vec = self.model(token_ids, valid_length, segment_ids)
                 preds = [ int(torch.argmax(cur_out)) for cur_out in out]
             
