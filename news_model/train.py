@@ -1,16 +1,8 @@
 import torch 
-import torchtext
-from torch.utils.data import Dataset, DataLoader 
-from torch.utils.data import SequentialSampler, BatchSampler
-import torch.nn as nn
-from torch.nn import Linear
-from torch.nn import Tanh
-from torch.nn import LSTM
-import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
 from transformers import AdamW
 from transformers.optimization import get_cosine_schedule_with_warmup
 from kobert_transformers import get_tokenizer, get_kobert_model 
-import gluonnlp as nlp
 
 import random
 import numpy as np

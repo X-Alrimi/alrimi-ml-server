@@ -1,16 +1,13 @@
 import torch 
-import torch.nn as nn
-from torch.utils.data import DataLoader 
-import numpy as np
+from torch.utils.data import DataLoader
 
 from kobert_transformers import get_tokenizer, get_kobert_model 
 
-from model import BERTNewsClassifier
-from news_dataset import NewsDataset
+from news_model.model import BERTNewsClassifier
+from news_model.news_dataset import NewsDataset
 
 
 import pandas as pd 
-import numpy as np
 
 class Pred() : 
     
@@ -22,7 +19,7 @@ class Pred() :
         model.load_state_dict(checkpoint['model_state_dict'])
         
         self.model = model
-        self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+        self.device = checkpoint['hyper_params']['device']
         
     def __call__(self, test_dataloader) :
         outs = list();vecs = list()
@@ -42,7 +39,7 @@ class Pred() :
                 preds = [ int(torch.argmax(cur_out)) for cur_out in out]
             
                 outs.extend([ cur_pred for cur_pred in preds])
-                vecs.extend([ cur_vec for cur_vec in vec])
+                vecs.extend([ cur_vec.cpu().tolist() for cur_vec in vec])
 
         return outs, vecs
         
@@ -52,18 +49,17 @@ if __name__ == "__main__":
     LOAD_PATH = './news_model/checkpoint/cur_epcoh_8.00_valid_recall_0.99_valid_precision_0.91_valid_f1_score_0.94__valid_acc_mea_0.95'
     checkpoint = torch.load(LOAD_PATH)
     tokenizer = get_tokenizer()
-    
+
     test_data = pd.read_csv('./data/test_data.csv')
     test_dataset = NewsDataset(test_data['input'], test_data['label'], tokenizer,\
                                 checkpoint['hyper_params']['embed_size'], \
                                 checkpoint['hyper_params']['batch_size'])
-    
+
     test_dataloader = DataLoader(test_dataset, batch_size=checkpoint['hyper_params']['batch_size'],\
                                 num_workers=checkpoint['hyper_params']['batch_size'])
-    
+
     pred_module = Pred(checkpoint)
     preds, vecs = pred_module(test_dataloader)
-    
+
     print(preds)
     print(vecs)
- 
